@@ -3,20 +3,23 @@
 [![PyPI version](https://badge.fury.io/py/pye3dc.svg)](https://badge.fury.io/py/pye3dc)
 [![GitHub license](https://img.shields.io/github/license/fsantini/python-e3dc)](https://github.com/fsantini/python-e3dc/blob/master/LICENSE)
 [![Codestyle](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Documentation Status](https://readthedocs.org/projects/python-e3dc/badge/?version=latest)](https://python-e3dc.readthedocs.io/en/latest/?badge=latest)
 
-**NOTE: With Release 0.6.0 at least Python 3.7 is required**
+**NOTE: With Release 0.8.0 at least Python 3.8 is required**
 
 Python API for querying an [E3/DC](https://e3dc.de/) systems
 
 This is supported either directly via RSCP connection or through the manufacturer's portal. The RSCP implementation has currently the most capabilities.
 
 In order to use it you need:
+
 - Your user name
 - Your password
 - The IP address of the E3/DC system
 - The RSCP Password (encryption key), as set on the device under Main Page -> Personalize -> User profile -> RSCP password
 
 Alternatively, for a web connection, you need:
+
 - Your user name
 - Your password
 - The serial number of the system, which can be found when logging into the E3/DC webpage.
@@ -31,12 +34,12 @@ This package can be installed from pip:
 
 ### Configuration
 
-There is a great variety of E3/DC implementation configurations, that can't automatically be detected. For example the `index` of the root power meter can be either `0` or `6`, depending how the system was installed. It is also possible to not only have one power meter or inverter.
+There is a great variety of E3/DC implementation configurations, that can't automatically be detected. For example the `index` of the root power meter can be either `0` or `6`, depending how the system was installed. Additional power meter can have an ID of `1-4` and there might be also multiple inverter.
 This library assumes, that there is one inverter installed and the root power meter has an index of `6` for S10 mini and `0` for other systems.
 
 For any other configurations, there is an optional `configuration` object that can be used to alter the defaults:
 
-```
+```python
 {
   "pvis": [
     {
@@ -85,6 +88,7 @@ print(e3dc.get_pvi_data())
 ### poll() return values
 
 Poll returns a dictionary like the following:
+
 ```python
 {
     'autarky': 100,
@@ -106,25 +110,25 @@ Poll returns a dictionary like the following:
 
 ### Available methods
 
-* `poll()`
-* `get_system_info()`
-* `get_system_status()`
-* `poll_switches()`
-* `get_idle_periods()`
-* `set_idle_periods()`
-* `get_db_data()`
-* `get_battery_data()`
-* `get_batteries_data()`
-* `get_pvi_data()`
-* `get_pvis_data()`
-* `get_powermeter_data()`
-* `get_powermeters_data()`
-* `get_power_settings()`
-* `set_power_limits()`
-* `set_powersave()`
-* `set_weather_regulated_charge()`
+- `poll()`
+- `get_system_info()`
+- `get_system_status()`
+- `poll_switches()`
+- `get_idle_periods()`
+- `set_idle_periods()`
+- `get_db_data()`
+- `get_battery_data()`
+- `get_batteries_data()`
+- `get_pvi_data()`
+- `get_pvis_data()`
+- `get_powermeter_data()`
+- `get_powermeters_data()`
+- `get_power_settings()`
+- `set_power_limits()`
+- `set_powersave()`
+- `set_weather_regulated_charge()`
 
-> A documentation for these methods is not yet generated. Please have a look at the docstrings in  `_e3dc.py` for details.
+See the full documentation on [ReadTheDocs](https://python-e3dc.readthedocs.io/en/latest/)
 
 ### Note: The RSCP interface
 
@@ -157,20 +161,19 @@ print(e3dc.poll_switches())
 
 ## Known limitations
 
-One limitation of the package concerns the implemented RSCP methods. This project also lacks the hardware to test different configurations. However, the RSCP protocol is fully implemented and it should be easy to extend the requests to other usecases.
+One limitation of the package concerns the implemented RSCP methods. This project also lacks the hardware to test different configurations. However, the RSCP protocol is fully implemented and it should be easy to extend the requests to other use cases.
 
 ## Projects using this library
 
-* [e3dc-rest](https://github.com/vchrisb/e3dc-rest): a simple REST API to access an E3/DC system
-* [e3dc-to-mqtt](https://github.com/mdhom/e3dc-to-mqtt): publish E3/DC data via MQTT
+- [e3dc-rest](https://github.com/vchrisb/e3dc-rest): a simple REST API to access an E3/DC system
+- [e3dc-to-mqtt](https://github.com/mdhom/e3dc-to-mqtt): publish E3/DC data via MQTT
+- [weewx-photovoltaics](https://github.com/roe-dl/weewx-photovoltaics): Extension to WeeWX for processing data of the photovoltaics system E3/DC
+- [hacs-e3dc](https://github.com/torbennehmer/hacs-e3dc): HACS Version of the E3DC Home Assistant integration
 
 ## Contribution
 
-* open an issue before making a pull request
-* note the E3/DC system you tested with and implementation details
-* pull request checks will enforce code styling (black, flake8, isort)
-* consider adding yourself to `AUTHORS`
-
-## Copyright notice
-
-The Rijndael algorithm comes from the python-cryptoplus package by Philippe Teuwen (https://github.com/doegox/python-cryptoplus) and distributed under a MIT license.
+- Open an issue before making a pull request
+- Note the E3/DC system you tested with and implementation details
+- Pull request checks will enforce code styling (black, flake8, flake8-docstrings, isort)
+- Make sure to support Python versions >= 3.8
+- Consider adding yourself to `AUTHORS`

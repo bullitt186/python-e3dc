@@ -8,6 +8,7 @@ import socket
 
 from ._RSCPEncryptDecrypt import RSCPEncryptDecrypt
 from ._rscpLib import rscpDecode, rscpEncode, rscpFrame
+from ._rscpTags import RscpError, RscpTag, RscpType
 
 PORT = 5033
 BUFFER_SIZE = 1024 * 32
@@ -21,6 +22,12 @@ class RSCPAuthenticationError(Exception):
 
 class RSCPNotAvailableError(Exception):
     """Class for RSCP Not Available Error Exception."""
+
+    pass
+
+
+class RSCPKeyError(Exception):
+    """Class for RSCP Encryption Key Error Exception."""
 
     pass
 
@@ -58,6 +65,8 @@ class E3DC_RSCP_local:
 
     def _receive(self):
         data = self.socket.recv(BUFFER_SIZE)
+        if len(data) == 0:
+            return None
         decData = rscpDecode(self.encdec.decrypt(data))[0]
         return decData
 
@@ -85,11 +94,14 @@ class E3DC_RSCP_local:
             self.disconnect()
             raise CommunicationError
 
+        if receive is None:
+            raise RSCPKeyError
+
         if receive[1] == "Error":
             self.disconnect()
-            if receive[2] == "RSCP_ERR_ACCESS_DENIED":
+            if receive[2] == RscpError.RSCP_ERR_ACCESS_DENIED.name:
                 raise RSCPAuthenticationError
-            elif receive[2] == "RSCP_ERR_NOT_AVAILABLE":
+            elif receive[2] == RscpError.RSCP_ERR_NOT_AVAILABLE.name:
                 raise RSCPNotAvailableError
             else:
                 raise CommunicationError(receive[2])
@@ -111,11 +123,15 @@ class E3DC_RSCP_local:
 
         self.sendRequest(
             (
-                "RSCP_REQ_AUTHENTICATION",
-                "Container",
+                RscpTag.RSCP_REQ_AUTHENTICATION,
+                RscpType.Container,
                 [
-                    ("RSCP_AUTHENTICATION_USER", "CString", self.username),
-                    ("RSCP_AUTHENTICATION_PASSWORD", "CString", self.password),
+                    (RscpTag.RSCP_AUTHENTICATION_USER, RscpType.CString, self.username),
+                    (
+                        RscpTag.RSCP_AUTHENTICATION_PASSWORD,
+                        RscpType.CString,
+                        self.password,
+                    ),
                 ],
             )
         )
